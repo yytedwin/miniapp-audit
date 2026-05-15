@@ -1,0 +1,13 @@
+#!/bin/sh
+PRG="$0"
+while [ -h "$PRG" ]; do
+  LS=$(ls -ld "$PRG")
+  LINK=$(expr "$LS" : ".*-> \\(.*\\)$")
+  case "$LINK" in
+    /*) PRG="$LINK" ;;
+    *) PRG="$(dirname "$PRG")/$LINK" ;;
+  esac
+done
+
+DIR="$(CDPATH= cd -- "$(dirname -- "$PRG")" && pwd)"
+exec node "$DIR/../dist/run.js" "$@"

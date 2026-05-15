@@ -1,0 +1,36 @@
+node_modules/
+.next/
+dist/
+build/
+.env
+.env.local
+.DS_Store
+*.log
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+
+# Local AI/IDE agent config
+.claude/
+.gemini/
+.kiro/
+.qoder/
+.vscode/
+.mcp.json
+.opencode.json
+.cursorrules
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+QODER.md
+AI_CODE_AUDIT_CLAUDE_EXECUTION.md
+
+# Local planning artifacts
+task_plan.md
+findings.md
+progress.md
+
+# Push later with a token that has workflow scope
+.github/workflows/

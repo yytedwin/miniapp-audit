@@ -1,0 +1,22 @@
+{
+  "rules": {},
+  "exclude": [
+    "node_modules",
+    ".git",
+    "dist",
+    ".next",
+    "fixtures",
+    "docs",
+    "e2e",
+    "scanner",
+    "test-results",
+    "playwright-report",
+    "route.test.ts",
+    "audit-report.md",
+    "audit-report.json",
+    "audit-report.html",
+    "audit-report.sarif",
+    "report.json",
+    "self-report.json"
+  ]
+}

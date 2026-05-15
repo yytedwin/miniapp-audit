@@ -1,0 +1,20 @@
+{
+  "description": "预期扫描发现 — 对 vulnerable-miniapp fixture 项目扫描时应匹配这些 Findings",
+  "expectedMinimum": 10,
+  "criticalFindings": [
+    ".env 文件被提交到仓库",
+    "API Key 明文硬编码",
+    "JWT Secret 明文硬编码",
+    "数据库连接信息明文硬编码",
+    "腾讯云 SecretId 明文硬编码",
+    "云服务 SecretKey 明文硬编码",
+    "getLocation 需要位置隐私声明",
+    "getUserProfile 需要用户信息隐私声明",
+    "支付回调缺少签名验证",
+    "API 接口无鉴权"
+  ],
+  "highFindings": [
+    "管理员账号硬编码",
+    "数据查询无用户归属校验 (潜在 IDOR)"
+  ]
+}

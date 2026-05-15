@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/pay/pay",
+    "pages/order/order"
+  ],
+  "window": {
+    "navigationBarTitleText": "漏洞小程序示例"
+  }
+}
