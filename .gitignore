@@ -31,6 +31,3 @@ AI_CODE_AUDIT_CLAUDE_EXECUTION.md
 task_plan.md
 findings.md
 progress.md
-
-# Push later with a token that has workflow scope
-.github/workflows/
