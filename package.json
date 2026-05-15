@@ -2,6 +2,8 @@
   "name": "miniapp-audit",
   "version": "0.1.0",
   "description": "小程序上线前安全检查工具",
+  "license": "MIT",
+  "author": "yytedwin",
   "keywords": [
     "miniapp",
     "wechat",
@@ -9,13 +11,16 @@
     "audit",
     "scanner"
   ],
-  "homepage": "https://github.com/your-name/miniapp-audit#readme",
+  "homepage": "https://github.com/yytedwin/miniapp-audit#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-name/miniapp-audit.git"
+    "url": "git+https://github.com/yytedwin/miniapp-audit.git"
   },
   "bugs": {
-    "url": "https://github.com/your-name/miniapp-audit/issues"
+    "url": "https://github.com/yytedwin/miniapp-audit/issues"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "main": "./dist/cli.js",
   "types": "./dist/cli.d.ts",
@@ -25,7 +30,8 @@
   "files": [
     "bin",
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build:cli": "tsc -p tsconfig.cli.json",
@@ -39,6 +45,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "prepack": "npm run build:cli"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {},
   "overrides": {

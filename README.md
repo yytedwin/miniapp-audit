@@ -1,89 +1,113 @@
 # miniapp-audit
 
-小程序上线前安全检查工具。本地静态扫描，不上传源码。
+本地运行的微信小程序上线前安全检查工具，支持 Web UI 和 CLI 双模式，帮助你在提审或发布前快速发现常见安全与合规风险。
 
-## 当前能力
+## Why this project
 
-| 扫描规则 | 适配器名称 | 检测内容 |
-|----------|-----------|----------|
-| 密钥泄露 | `secret-scanner` | API Key、JWT Secret、云密钥、.env 文件、PEM 私钥 |
-| 依赖漏洞 | `dependency-scanner` | npm 已知安全漏洞 / advisory / CVE |
-| 隐私合规 | `privacy-rule` | wx.getLocation 等隐私 API 未在 app.json 声明 |
-| 支付风险 | `payment-rule` | 支付回调未验签、金额信任前端、无幂等处理 |
-| 权限漏洞 | `authz-rule` | 无鉴权中间件、硬编码账号、IDOR 查询 |
+- 不上传源码，适合本地自查
+- 同时支持 Web 界面和命令行
+- 支持 Markdown、JSON、HTML、SARIF 四种报告输出
+- 扫描结果可导出为整改建议文档，方便给开发、测试、运营协作处理
 
-| 报告格式 | CLI 参数 | 说明 |
-|----------|----------|------|
-| Markdown | `--format markdown` (默认) | 纯文本，适合开发者自用 |
-| JSON | `--format json` | 结构化输出，供脚本和工具链消费 |
-| HTML | `--format html` | 自包含 HTML 文件，可离线分享 |
-| SARIF | `--format sarif` | SARIF 2.1.0，可接入 GitHub Code Scanning |
+## What it checks
 
-| 功能 | 说明 |
-|------|------|
-| 配置文件 | `miniapp-audit.config.json` 控制规则开关和排除路径 |
-| Web UI | Next.js 界面，首页 → 扫描 → 报告 → 历史 |
-| 扫描历史 | 浏览器 localStorage 持久化，最多 50 条，点击可回看历史报告 |
-| E2E 测试 | Playwright smoke tests 覆盖首页 → 扫描 → 报告 → 历史页 |
+| 类别 | 检测内容 |
+|------|----------|
+| 密钥泄露 | API Key、JWT Secret、云密钥、`.env`、PEM 私钥 |
+| 依赖漏洞 | npm 已知安全漏洞 / advisory / CVE |
+| 隐私合规 | `wx.getLocation` 等隐私 API 未在 `app.json` 声明 |
+| 支付风险 | 回调未验签、金额信任前端、无幂等处理 |
+| 权限漏洞 | 缺失鉴权、硬编码账号、IDOR 查询 |
 
-## 快速开始
+## Output formats
+
+| 格式 | 参数 | 适合场景 |
+|------|------|----------|
+| Markdown | `--format markdown` | 开发者本地查看 |
+| JSON | `--format json` | 脚本处理、二次集成 |
+| HTML | `--format html` | 离线分享、归档留存 |
+| SARIF | `--format sarif` | 接入 GitHub Code Scanning / 安全平台 |
+
+## Quick start
+
+### 1. 本地 Web UI
 
 ```bash
-# 本地开发
 npm install
-
-# 运行测试
-npm test
-
-# 启动 Web UI
 npm run dev
-# 打开 http://localhost:3000
 ```
 
-### 从 GitHub 或 npm 使用
+然后打开 [http://localhost:3000](http://localhost:3000)。
 
-发布到 npm 后可以直接运行：
+### 2. 本地 CLI
 
 ```bash
-npx miniapp-audit /path/to/your/project --format html --output report.html
+npm install
+npm run build:cli
+./bin/miniapp-audit /path/to/your/project --format html --output report.html
 ```
 
-也可以从 GitHub 克隆后在本机使用：
+### 3. 从 GitHub 克隆
 
 ```bash
-git clone https://github.com/your-name/miniapp-audit.git
+git clone https://github.com/yytedwin/miniapp-audit.git
 cd miniapp-audit
 npm install
 npm run build:cli
 ./bin/miniapp-audit /path/to/your/project --format json --output report.json
 ```
 
-### CLI 使用方式
+### 4. 未来从 npm 使用
+
+发布后可直接运行：
 
 ```bash
-# 基本用法（默认输出 Markdown）
+npx miniapp-audit /path/to/your/project --format html --output report.html
+```
+
+## CLI examples
+
+```bash
+# 默认输出 Markdown
 miniapp-audit /path/to/your/project
 
 # 指定输出路径
 miniapp-audit /path/to/your/project --output ./my-report.md
 
-# JSON 格式
+# JSON 报告
 miniapp-audit /path/to/your/project --format json --output report.json
 
-# HTML 格式（自包含文件，可离线分享）
+# HTML 报告
 miniapp-audit /path/to/your/project --format html --output report.html
 
-# SARIF 格式（可接入 CI/CD）
+# SARIF 报告
 miniapp-audit /path/to/your/project --format sarif --output report.sarif
 
-# 使用自定义配置文件
-miniapp-audit /path/to/your/project --config ./my-rules.json
+# 自定义配置文件
+miniapp-audit /path/to/your/project --config ./miniapp-audit.config.json
 
-# 详细日志
+# 输出详细日志
 miniapp-audit /path/to/your/project --verbose
 ```
 
-## 配置文件
+## Web workflow
+
+| 页面 | 路由 | 功能 |
+|------|------|------|
+| 首页 | `/` | 输入项目路径并发起扫描 |
+| 扫描页 | `/scan` | 显示扫描过程与规则执行状态 |
+| 报告页 | `/report/[id]` | 查看问题详情、风险等级、修复建议 |
+| 历史页 | `/history` | 查看最近扫描记录并回看历史报告 |
+
+如果报告中发现问题，页面会提供“下载整改建议”文档，自动整理：
+
+- 是否建议上线
+- 问题证据和受影响文件
+- 优先处理顺序
+- 修复建议
+- 复查清单
+
+## Config file
 
 在项目根目录创建 `miniapp-audit.config.json`：
 
@@ -100,49 +124,13 @@ miniapp-audit /path/to/your/project --verbose
 }
 ```
 
-- `rules.<adapterName>.enabled` 设为 `false` 可禁用对应扫描规则
-- `exclude` 指定要跳过的目录名（默认 `["node_modules", ".git", "dist"]`）
-- 配置文件不存在时，所有规则默认启用
-- CLI `--config <路径>` 可指定自定义配置文件位置
+- `rules.<adapterName>.enabled = false` 可以禁用某条规则
+- `exclude` 可以排除不需要扫描的目录
+- 不传 `--config` 时会使用默认规则
 
-### 示例：禁用依赖扫描
+## Verification
 
-```json
-{
-  "rules": {
-    "dependency-scanner": { "enabled": false }
-  }
-}
-```
-
-### 示例：排除 utils 目录
-
-```json
-{
-  "exclude": ["node_modules", ".git", "dist", "utils"]
-}
-```
-
-## Web 使用方式
-
-```bash
-npm run dev
-```
-
-| 页面 | 路由 | 功能 |
-|------|------|------|
-| 首页 | `/` | 输入项目路径，选择项目类型，开始扫描 |
-| 扫描页 | `/scan` | 显示扫描进度，5 个适配器并行执行 |
-| 报告页 | `/report/[id]` | 按严重等级分组的 Findings，含证据和修复建议 |
-| 历史页 | `/history` | 最近扫描记录列表，点击可回看历史报告 |
-
-报告页在发现问题时会显示 **下载整改建议** 按钮，可下载 Markdown 文档到本地，内容包括上线判断、优先整改顺序、问题证据、修复建议和复查清单。
-
-## 发布到 GitHub / npm 前
-
-1. 把 `package.json` 里的 `homepage`、`repository.url`、`bugs.url` 改成你的 GitHub 仓库地址。
-2. 如需开源，补充你选择的许可证文件，例如 `LICENSE`。没有许可证时，默认不授予他人复用权。
-3. 本地跑完整验证：
+当前公开版本已完成以下验证：
 
 ```bash
 npm test
@@ -153,51 +141,45 @@ npm run test:e2e
 npm audit --audit-level=moderate
 ```
 
-4. 打包并本地安装验证：
+其中 E2E 使用 Playwright 覆盖首页、扫描、报告、历史页的主路径。
+
+## npm publish checklist
 
 ```bash
+npm install
+npm run build:cli
 npm pack
-npm install -g ./miniapp-audit-*.tgz
-miniapp-audit fixtures/vulnerable-miniapp --format json --output /tmp/miniapp-audit-report.json
+npm publish --access public
 ```
 
-5. 推送到 GitHub 后，CI 会自动跑类型检查、lint、测试、构建、依赖审计和 npm 包 smoke test。
-
-## 验证命令
-
-```bash
-npm test              # 运行所有测试 (unit + integration)
-npm run typecheck     # TypeScript 类型检查
-npm run lint          # ESLint 检查
-npm run build         # Next.js 构建
-npm run test:e2e      # Playwright E2E smoke tests
-npm audit --audit-level=moderate  # 依赖安全检查
-```
-
-### E2E Smoke Tests
-
-使用 Playwright 验证 Web UI 核心路径。首次运行需安装 Chromium：
+首次运行 E2E 如缺少浏览器：
 
 ```bash
 npx playwright install chromium
-npm run test:e2e
 ```
 
-覆盖路径：首页 → 输入路径 → 扫描 → 报告页 → 历史页 → 点击历史记录回报告。
+## Limitations
 
-E2E fixture 中通过 `miniapp-audit.config.json` 禁用 `dependency-scanner`，避免测试中出网访问 npm registry。Playwright 会自动在 `localhost:3100` 启动独立的 Next.js dev server，避免复用本地 `3000` 端口上的旧进程。
+- 仅建议在本机 `localhost` 使用 Web API，不做多用户鉴权
+- 扫描历史保存在浏览器 `localStorage`
+- `dependency-scanner` 会访问 npm advisory API，但不会上传源码
+- 这是静态分析工具，不能替代人工安全审计
 
-## 当前限制
+## Tech stack
 
-- Web API 仅建议在本机 localhost 使用，不做用户鉴权
-- 扫描历史保存在浏览器 localStorage，清除浏览器数据会丢失
-- `dependency-scanner` 会访问 npm registry advisory API 查询依赖漏洞，不上传源码，但会发送 package 名称列表。如需完全离线扫描，可在配置中禁用 `dependency-scanner`
-- 内置规则覆盖常见风险场景，不能替代人工安全审计
-- 不执行用户代码，只做静态分析
-- 源码不会被上传到任何服务器
+- TypeScript
+- Next.js
+- React
+- Vitest
+- Playwright
 
-## 技术栈
+## Roadmap
 
-- TypeScript + Next.js
-- Vitest (测试)
-- Node.js >= 18
+- 更完整的 SARIF rule metadata
+- 更多小程序审核类规则
+- 更细粒度的项目类型模板
+- npm 正式发布后的安装与版本管理
+
+## License
+
+MIT
