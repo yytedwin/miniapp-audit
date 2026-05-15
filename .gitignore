@@ -31,3 +31,6 @@ AI_CODE_AUDIT_CLAUDE_EXECUTION.md
 task_plan.md
 findings.md
 progress.md
+
+# Keep the intentionally vulnerable fixture env file for tests and demos
+!fixtures/vulnerable-miniapp/.env
