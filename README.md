@@ -152,6 +152,8 @@ npm pack
 npm publish --access public
 ```
 
+更完整的发布步骤见 [docs/PUBLISHING.md](docs/PUBLISHING.md)。
+
 首次运行 E2E 如缺少浏览器：
 
 ```bash
